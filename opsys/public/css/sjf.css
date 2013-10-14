@@ -1,0 +1,67 @@
+html, body {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background: url('../img/bg.jpg') fixed no-repeat;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -ms-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+#wrapper {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid #fff;
+  height: auto;
+  min-height: 100%;
+  width: 90%;
+  margin: auto;
+  padding: 20px;
+  overflow: auto;
+}
+
+#wrapper > h1 {
+  font: 5em Helvetica Neue, Segoe Ui, Arial, Tahoma, san-serif;
+}
+
+[contenteditable]:not(:focus):empty::after {
+  content: attr(data-placeholder);
+  color: #ccc;
+}
+
+.bt, .at, .priority, .job-id {
+  width: 25%;
+}
+
+table {
+  margin-top: 10px;
+}
+
+table input {
+  border: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  padding: 0;
+  margin: 0;
+}
+
+td {
+  border-collapse: collapse;
+  vertical-align: middle !important;
+}
+
+#btn-add-job, #btn-test-job {
+  float: right;
+  margin-left: 10px;
+}
+
+#btn-test-job {
+  display: none;
+}
+
+.btn i[class*='icon-'] {
+  margin: 0 5px;
+}

@@ -1,0 +1,78 @@
+body {
+  background: url('../img/bg.jpg') fixed no-repeat;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+}
+.replaced {
+  background: #800000;
+  color: #fff;
+}
+
+
+h1 {
+  color: #666;
+  font-weight: 500;
+  font-size: 5em;
+}
+
+#results {
+  margin: auto;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid #fff;
+  padding: 10px;
+  width: 50%;
+  min-width: 350px;
+}
+
+#results table:last-child {
+  clear: both;
+}
+
+#wrapper {
+  width: 80%;
+  margin: auto;
+}
+
+#input {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid #fff;
+  padding: 10px;
+  width: 50%;
+  margin: auto;
+  vertical-align: top;
+  min-width: 350px;
+}
+
+#results table {
+  margin-bottom: 10px;
+}
+
+#results td {
+  border-radius: 3px;
+  padding: 5px;
+  text-align: center;
+  width: 40px;
+}
+
+#input .form-control {
+  margin-top: 10px;
+}
+
+#input .form-control:last-child {
+  margin-bottom: 10px;
+}
+
+p.success, p.fault {
+  width: 50%;
+  height: 80px;
+  float: left;
+}
+
+p.success {
+  text-align: right;
+}
+/*
+#frames {
+  width: 150px;
+}*/
