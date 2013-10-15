@@ -40,6 +40,10 @@ table {
   margin-top: 10px;
 }
 
+table th {
+  text-align: center;
+}
+
 table input {
   border: 0 !important;
   background: none !important;
@@ -60,6 +64,15 @@ td {
 
 #btn-test-job {
   display: none;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  -ms-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+
+.show {
+  display: block;
 }
 
 .btn i[class*='icon-'] {

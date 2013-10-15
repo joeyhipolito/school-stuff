@@ -7,6 +7,10 @@ Array.prototype.inObjects = function(key, value) {
   return false;
 };
 
+Array.prototype.clone = function() {
+  return this.slice(0);
+};
+
 Array.prototype.rowsToColumns = function() {
   var arrC = [],
       x = Math.max.apply(Math, this.map(function (e) {return e.length;})),

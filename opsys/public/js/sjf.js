@@ -1,95 +1,161 @@
-function setAttributes(el, attrs) {
-  for(var key in attrs) {
-    el.setAttribute(key, attrs[key]);
-  }
-}
-
-function compare(a,b) {
-  if (a.at < b.at)
-     return -1;
-  if (a.at > b.at)
-    return 1;
-  return 0;
-}
-
 var opsys = function() {};
+
+opsys.prototype.vars = {
+  jobs : [],
+  jobLength : 0
+}
 
 opsys.prototype.init = function() {
   opsys.prototype.bindEvents();
 };
 
-opsys.prototype.jobs = [];
+opsys.prototype.sort = function(array, by) {
+  array.sort(function(a,b){
+    if(a[by] < b[by])
+      return -1;
+    if(a[by] > b[by])
+      return 1;
+    return 0;
+  });
+};
 
 opsys.prototype.bindEvents = function() {
-  var btnAdd = document.getElementById('btn-add-job');
-  var jobList = $('#list-jobs');
-  btnAdd.addEventListener('click', function(e) {
-     $('#btn-test-job').fadeIn();
-     var count = $('.job').length;
-     jobList.children('tbody').append("<tr class='job' data-job-id='" + (count) + "'><td><b>J" + (count) + "</b>" + 
-           "<td><input class='form-control' type='text' placeholder='Change BT' data-criteria='bt'>" + 
-           "<td><input class='form-control' type='text' placeholder='Change AT' data-criteria='at'>" +
-           "<td><input class='form-control' type='text' placeholder='Change Priority' data-criteria='priority'></tr>");
-  });
-  // $('#btn-remove-job').on('click', function(e){
-  //   if (jobList.find('tr').length > 1) {
-  //     jobList.find('tr:last-child').remove();
-  //     opsys.prototype.jobs.pop();
-  //   };
-  // });
-  $('#btn-test-job').on('click', function(e){
-    opsys.prototype.ui.process();
-    $('#btn-add-job').fadeOut();
-  });
-  $('#list-jobs').on('keyup', 'input', function() {
-    var criteria = $(this).data('criteria');
-    var parentRow = $(this).parent().parent();
-    var jobId = parentRow.data('job-id');
-    if(!opsys.prototype.jobs[jobId]) {
-      opsys.prototype.jobs[jobId] = {job: 'J' + jobId};
+  var btnAddJob    = $('#btn-add-job'),
+      btnRemoveJob = $('#btn-remove-job'),
+      btnTestJob   = $('#btn-test-job');
+  var listJobs    = $('#list-jobs'),
+      listProcess = $('#list-process'),
+      listGantt   = $('#list-gantt'),
+      listResult  = $('#list-result');
+
+  // on click on add job
+  btnAddJob.on('click', function(e){
+    var jobCount = $('.job').length + 1;
+    opsys.prototype.vars.jobLength = jobCount;
+    opsys.prototype.table.rows.add(listJobs,
+        [
+          {"class" : "job"},
+          {"data-job-id" : "j" + jobCount}
+        ],
+        [
+          "<b>J" + jobCount + "</b>",
+          "<input class='form-control' type='text' placeholder='bt' data-criteria='bt'>",
+          "<input class='form-control' type='text' placeholder='at' data-criteria='at'>",
+          "<i class='icon-remove'></i>"
+        ],
+        true
+      )
+    var empty = listJobs.find('input').filter(function(){
+      return this.value === "";
+    });
+    if(empty.length) {
+      btnTestJob.removeClass('show');
+    } else {
+      btnTestJob.addClass('show');
     }
-    opsys.prototype.jobs[jobId][criteria] = parseInt(this.value);
   });
 
-};
-  
-opsys.prototype.ui = {
-  build: function() {
-    
-  },
-  process: function() {
-    var processList = $('#process');
-    processList.html('<tr>' +
-                        '<th>Time</th>' +
-                        '<th>Process</th>' +
-                      '</tr>');
-    jobs = opsys.prototype.jobs;
-    sorted = jobs.sort(compare);
-    maxTime = 0;
-    $.each(jobs, function(k, v){
-      maxTime = v.at > maxTime ? v.at : maxTime;
+  btnRemoveJob.on('click', function(e){
+    opsys.prototype.table.rows.remove(listJobs);
+  });
+
+  btnTestJob.on('click', function(e){
+    opsys.prototype.test.tabulateProcesses();
+  });
+
+  listJobs.on('keyup', 'input', function(e){
+    var that = $(this);
+    var parent = that.closest('.job');
+    var criteria = that.data('criteria'),
+        jobId    = parent.data('job-id');
+    var empty = parent.find("input").filter(function() {
+        return this.value === "";
     });
-    var row = [];
+    var row = opsys.prototype.vars.jobs[parent[0].rowIndex - 1]
+    if(!row) {
+      row = {job: jobId};
+    }
+      row[criteria] = parseInt(this.value, 10);
+
+    opsys.prototype.vars.jobs[parent[0].rowIndex - 1] = row;
+
+    if(empty.length) {
+      parent.find('i').removeClass('icon-ok').addClass('icon-remove');
+    } else {
+      parent.find('i').removeClass('icon-remove').addClass('icon-ok');
+    }
+    var empty = listJobs.find('input').filter(function(){
+      return this.value === "";
+    });
+    if(empty.length) {
+      btnTestJob.removeClass('show');
+    } else {
+      btnTestJob.addClass('show');
+    }
+
+  });
+};
+
+
+opsys.prototype.test = {
+  tabulateArrivalTime: function() {
+    var listProcess = $('#list-process');
+    listProcess.html('<tr><th>Time<th>Process');
+    var jobs = opsys.prototype.vars.jobs.clone();
+    opsys.prototype.sort(jobs, 'at');
+    var maxTime = jobs[jobs.length - 1].at;
     for (var i = 0; i <= maxTime; i++) {
-      row.push('<tr>');
-      row.push('<td>' + i);
-      var arrivedJobs = "";
-      for (var j = 0; j < sorted.length; j++) {
-        if(sorted[j].at == i) {
-          arrivedJobs += sorted[j].job + '(' + sorted[j].bt + 'ms)' + "," ;
+      var row = $('<tr>');
+      row.append('<td>' + i);
+      var arrivedJobs = '';
+      for (var j = 0; j < jobs.length; j++) {
+        if(jobs[j].at == i) {
+          arrivedJobs += jobs[j].job + '(' + jobs[j].bt + 'ms)' + "," ;
         }
       };
-      row.push('<td>' + arrivedJobs.replace(/(^,)|(,$)/g, ""));
+      row.append('<td>' + arrivedJobs.replace(/(^,)|(,$)/g, ""));
+      listProcess.append(row);
     };
-    processList.append(row.join(''));
   },
-  process2: function() {
-    
-  },
-  tabulate: function() {
-
+  preemptive: function() {
+    var listProcess = $('#list-process');
+    listProcess.html('<tr><th>Time<th>Process');
+    var jobs = opsys.prototype.vars.jobs.clone();
+    opsys.prototype.sort(jobs, 'at');
   }
 }
+
+opsys.prototype.table = {
+  rows: {}
+};
+
+opsys.prototype.table.rows = {
+  add: function(table, attr, data, tbody) {
+    var row = $('<tr>');
+    for (var i = 0; i < attr.length; i++) {
+      $.each(attr[i], function(k,v){
+        row.attr(k , v);
+      });
+    };
+    for (var i = 0; i < data.length; i++) {
+      row.append('<td>' + data[i]);
+    };
+    if(!tbody) {
+      table.append('<tbody>').append(row);
+    } else if(tbody) {
+      table.find(' > tbody:last').append(row);
+    }
+  },
+  remove: function(table, row) {
+    if(row){
+      table.find(' > tbody:last').find('tr:nth-child(' + row + ')').remove();
+    }else {
+      table.find(' > tbody:last').find('tr:last').remove();
+    }
+  }
+};
+
+
 
 var op = new opsys;
 window.onload = op.init();
