@@ -26,16 +26,23 @@
     </div>
     <section class="table-responsive col-md-2">
       <table id="list-process" class="table table-bordered">
-        <tr>
-          <th>Time</th>
-          <th>Process</th>
-        </tr>
+        <thead>
+          <!-- <tr>
+            <th>Time</th>
+            <th>Process</th>
+          </tr> -->
+          <tr>
+            <th>Process</th>
+            <th>Start</th>
+            <th>End</th>
+          </tr>
+        </thead>
       </table>
     </section>
     <section class="table-responsive col-md-5">
-      <table id="list-gantt" class="table table-bordered">
+<!--       <table id="list-gantt" class="table table-bordered">
         <tr><th colspan="4">Gantt</th></tr>
-      </table>
+      </table> -->
       <table id="list-result" class="table table-bordered">
         <tr>
           <th>ST</th>
@@ -46,6 +53,7 @@
       </table>
     </section>
   </div>
+
   <script src="public/js/jquery.min.js"></script>
   <script src="public/js/array.prototype.js"></script>
   <script src="public/js/sjf.js"></script>

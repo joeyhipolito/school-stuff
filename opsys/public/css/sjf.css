@@ -78,3 +78,7 @@ td {
 .btn i[class*='icon-'] {
   margin: 0 5px;
 }
+
+.died {
+  text-decoration: line-through;
+}
